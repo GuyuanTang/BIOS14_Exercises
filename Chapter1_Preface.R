@@ -26,7 +26,7 @@ mean(x) + 1.96*se_x #10.624
 
 #95% CI for CV of X
 cv_x = sqrt(var(x))/mean(x) #0.163004
-cv_x - 1.96*se_x #-0.2978972 wrong
+cv_x - 1.96*se_x #-0.2978972 wrong should not use the SE, because SE is for the mean
 cv_x + 1.96*se_x #0.6239054 wrong
 
 #Exercise1
