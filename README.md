@@ -1,2 +1,2 @@
 # BIOS14_Exercises
-Try to upload the codes for BIOS14 exercises and be familiar with github
+All the codes for the exercises will be uploaded in this branch.
