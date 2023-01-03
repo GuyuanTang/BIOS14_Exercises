@@ -43,17 +43,35 @@ blossom_l = filter(blossom, sp=='L')
 hist(blossom_l$GA)
 #both are approximately close to the pattern of normal distribution
 #apply one-way ANOVA to test whether there is difference in GA between species
-m_sp = lm(GA ~ sp-1, data = blossom)
+m_sp = lm(GA ~ sp, data = blossom)
 anova(m_sp)
 ##Analysis of Variance Table
 
 ##Response: GA
-##            Df Sum Sq Mean Sq F value    Pr(>F)    
-##sp           2 4644.4  2322.2    7837 < 2.2e-16 ***
-##Residuals  362  107.3     0.3                      
+##             Df  Sum Sq Mean Sq F value    Pr(>F)    
+##  sp          1  69.889  69.889  235.87 < 2.2e-16 ***
+##  Residuals 362 107.264   0.296                      
 ##---
 ##Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
+summary(m_sp)
+##Call:
+##  lm(formula = GA ~ sp, data = blossom)
+
+##Residuals:
+##  Min       1Q   Median       3Q      Max 
+##-1.38309 -0.34275 -0.01167  0.34154  2.09691 
+
+##Coefficients:
+##            Estimate Std. Error t value Pr(>|t|)    
+##(Intercept)  3.93309    0.03811  103.20   <2e-16 ***
+##spS         -0.88284    0.05748  -15.36   <2e-16 ***
+##---
+##Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+##Residual standard error: 0.5443 on 362 degrees of freedom
+##Multiple R-squared:  0.3945,	Adjusted R-squared:  0.3928 
+##F-statistic: 235.9 on 1 and 362 DF,  p-value: < 2.2e-16
 ###############
 
 #summarize the GA in different species under different treatments
@@ -78,7 +96,7 @@ ses
 #boxplot to show the difference clearly
 ggplot(blossom, aes(x=sp, y=GA, fill=treat)) +
   geom_boxplot() +
-  labs(x='Species', y='Gland area (mm^2)') +
+  labs(x='Species', y='Gland area (mm)') +
   scale_fill_manual(name = "Treatments",
                     labels = c("Dry", "Wet"),
                     values = c('grey', 'white')) +
@@ -98,4 +116,24 @@ anova(m_dw_sp)
 ##---
 ##Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
+summary(m_dw_sp)
+##Call:
+##  lm(formula = GA ~ sp * treat, data = blossom)
+
+##Residuals:
+##  Min       1Q   Median       3Q      Max 
+##-1.28101 -0.29909 -0.01856  0.30091  1.86438 
+
+##Coefficients:
+##            Estimate Std. Error t value Pr(>|t|)    
+##(Intercept)  3.59562    0.04534  79.312  < 2e-16 ***
+##spS         -0.73951    0.07108 -10.404  < 2e-16 ***
+##treatW       0.69539    0.06508  10.686  < 2e-16 ***
+##spS:treatW  -0.34241    0.09841  -3.479 0.000564 ***
+##---
+##Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+##Residual standard error: 0.4645 on 360 degrees of freedom
+##Multiple R-squared:  0.5615,	Adjusted R-squared:  0.5578 
+##F-statistic: 153.6 on 3 and 360 DF,  p-value: < 2.2e-16
 
