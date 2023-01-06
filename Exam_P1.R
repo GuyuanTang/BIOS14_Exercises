@@ -3,12 +3,12 @@
 #Author: Guyuan Tang
 #Description: this program aims to analyse the research questions (a. whether there is difference in GA between 2 species; 
 #             b.whether environment (D/W) play a role in GA) based on the dataset
-#Packages in use: tidyverse, sciplot, knitr
+#Packages in use: tidyverse, sciplot
 ################################
+rm(list = ls())
 
 library(tidyverse)
 library(sciplot)
-library(knitr)
 
 #read the data from the csv file
 dat = read.csv("exam2022_part1.csv")
@@ -42,37 +42,6 @@ hist(blossom_s$GA)
 blossom_l = filter(blossom, sp=='L')
 hist(blossom_l$GA)
 #both are approximately close to the pattern of normal distribution
-#apply one-way ANOVA to test whether there is difference in GA between species
-m_sp = lm(GA ~ sp, data = blossom)
-anova(m_sp)
-##Analysis of Variance Table
-
-##Response: GA
-##             Df  Sum Sq Mean Sq F value    Pr(>F)    
-##  sp          1  69.889  69.889  235.87 < 2.2e-16 ***
-##  Residuals 362 107.264   0.296                      
-##---
-##Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-summary(m_sp)
-##Call:
-##  lm(formula = GA ~ sp, data = blossom)
-
-##Residuals:
-##  Min       1Q   Median       3Q      Max 
-##-1.38309 -0.34275 -0.01167  0.34154  2.09691 
-
-##Coefficients:
-##            Estimate Std. Error t value Pr(>|t|)    
-##(Intercept)  3.93309    0.03811  103.20   <2e-16 ***
-##spS         -0.88284    0.05748  -15.36   <2e-16 ***
-##---
-##Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-##Residual standard error: 0.5443 on 362 degrees of freedom
-##Multiple R-squared:  0.3945,	Adjusted R-squared:  0.3928 
-##F-statistic: 235.9 on 1 and 362 DF,  p-value: < 2.2e-16
-###############
 
 #summarize the GA in different species under different treatments
 means = tapply(blossom$GA, list(blossom$sp, blossom$treat), mean)
