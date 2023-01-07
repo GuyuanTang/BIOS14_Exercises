@@ -3,13 +3,12 @@
 #Author: Guyuan Tang
 #Description: this program aims to analyse the research questions (a. mass distribution in different sex and density; 
 #             b. the relationship between body mass and horn length in different sex
-#Packages in use: tidyverse, sciplot, knitr,glmmTMB
+#Packages in use: tidyverse, sciplot,glmmTMB
 ################################
 rm(list = ls())
 
 library(tidyverse)
 library(sciplot)
-library(knitr)
 library(glmmTMB)
 
 #read the dataset and remove the NA values
@@ -18,7 +17,6 @@ names(dat)
 ##[1] "sex"     "date"    "hornL"   "hornR"   "season"  "month"   "day"     "yr"      "daynr"  
 ##[10] "age"     "cohort"  "mass"    "density"
 
-goats$cohort = as.integer(goats$cohort)
 
 #to better analyse the data with biological meaning, we check the relationship between two horns
 plot(dat$hornL, dat$hornR)
@@ -55,13 +53,10 @@ goats_den = goats %>% group_by(density) %>% summarise(horn_md = median(hornM), h
 ##1 high        190      151     213     3       1      5      21.4   0.112    5.33        2258     2004
 ##2 low         190      163     213     4       1      6      23.2   0.114    5.29        2136     1991
 
-#draw boxplots to identify mass distribution according to age and cohort
+#draw boxplots to identify mass distribution according to age, cohort and density
 ggplot(goats, aes(x=factor(age), y=mass)) + geom_boxplot() + theme_classic()
 ggplot(goats, aes(x=factor(cohort), y=mass)) + geom_boxplot() + theme_classic
 ggplot(goats, aes(x=factor(density), y=mass)) + geom_boxplot() + theme_classic()
-
-ggplot(goats, aes(x=sex, y=mass, fill=density)) + geom_boxplot() + theme_classic()
-ggplot(goats, aes(x=sex, y=hornM, fill=density)) + geom_boxplot() + theme_classic()
 
 #use ANOVA to test whether body mass is different in different sex and density
 m_test = lm(mass ~ sex*density, data = goats)
@@ -95,8 +90,8 @@ anova(mc_test_sex)
 
 #draw scatterplots
 ggplot(goats, aes(x = hornM, y = mass, color = sex)) + geom_point(aes(color = sex, shape = sex), size=1.5) +
-  geom_smooth(method = 'lm', se=T, linewidth = 1.5, color='black') + theme_classic() + labs(x='average horn length (mm)', y='body mass (kg)') +
-  scale_color_manual(values = c('#FF99CC', '#99CCFF')) +geom_smooth(method = 'lm', se=T, linewidth = 1.5)
+  geom_smooth(method = 'lm', se=T, linewidth = 1.25, color='black') + theme_classic() + labs(x='average horn length (mm)', y='body mass (kg)') +
+  scale_color_manual(values = c('#FF9933', '#00CC66')) +geom_smooth(method = 'lm', se=T, linewidth = 1.25)
 
 #linear mixed model based on the analysis above
 m_fit = glmmTMB(mass ~ hornM + (1|sex) + (1|density), data = goats)
@@ -179,3 +174,12 @@ summary(m_fit_F)
 ##hornM       0.065630   0.001625   40.38   <2e-16 ***
 ##---
 ##Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+#calculate the 95% CI for slopes of hornM in different sex
+confint(m_fit_M, 'hornM', level = 0.95)
+##           2.5 %     97.5 %   Estimate
+##hornM 0.09113013 0.09868084 0.09490549
+confint(m_fit_F, 'hornM', level = 0.95)
+##          2.5 %     97.5 %   Estimate
+##hornM 0.0624447 0.06881504 0.06562987
+
